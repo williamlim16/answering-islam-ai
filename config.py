@@ -14,9 +14,10 @@ CHROMA_DIR = DATA_DIR / "chromadb"
 
 # Crawler settings
 BASE_URL = "https://www.answering-islam.org"
-CRAWL_DELAY = 1.5  # seconds between requests (be polite)
+CRAWL_DELAY = 1.5  # seconds between requests per worker
 MAX_PAGES = 2000  # safety limit
 REQUEST_TIMEOUT = 30  # seconds
+CRAWL_CONCURRENCY = 5  # number of concurrent workers
 
 # Language filter — excluded URL path prefixes (non-English sections)
 EXCLUDED_PATHS = [

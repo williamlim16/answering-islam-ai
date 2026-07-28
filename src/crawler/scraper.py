@@ -61,7 +61,15 @@ class Crawler:
                 url, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
             ) as response:
                 response.raise_for_status()
-                return await response.text()
+                raw = await response.read()
+
+                # Detect encoding: header → meta tag → utf-8 fallback → latin-1
+                encoding = response.charset or "utf-8"
+                try:
+                    return raw.decode(encoding)
+                except (UnicodeDecodeError, LookupError):
+                    # Try latin-1 — it can decode any byte sequence
+                    return raw.decode("latin-1", errors="replace")
         except Exception as e:
             print(f"  ✗ Error fetching {url}: {e}")
             return None

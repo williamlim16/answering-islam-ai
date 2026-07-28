@@ -8,8 +8,9 @@ from collections import deque
 import aiohttp
 from tqdm import tqdm
 
-from config import BASE_URL, CRAWL_DELAY, MAX_PAGES, REQUEST_TIMEOUT, RAW_DIR
-from .parser import extract_links
+import config
+from config import BASE_URL, CRAWL_DELAY, REQUEST_TIMEOUT, RAW_DIR
+from .parser import extract_links, is_english
 
 
 class Crawler:
@@ -46,6 +47,21 @@ class Crawler:
                 self.manifest = json.load(f)
             self.visited = {item["url"] for item in self.manifest}
             print(f"Resuming: {len(self.visited)} pages already crawled")
+            
+            print("Rebuilding queue from existing files to find missed links...")
+            for item in self.manifest:
+                filepath = self.raw_dir / item["filename"]
+                if filepath.exists():
+                    try:
+                        html = filepath.read_text(encoding="utf-8", errors="replace")
+                        new_links = extract_links(html, self.base_url)
+                        for link in new_links:
+                            if link not in self.visited and link not in self.queue:
+                                self.queue.append(link)
+                    except Exception as e:
+                        pass
+            
+            print(f"Discovered {len(self.queue)} unexplored links to resume from.")
 
     def _save_manifest(self) -> None:
         """Save the crawl manifest."""
@@ -93,13 +109,17 @@ class Crawler:
             if url in self.visited:
                 continue
 
-            if len(self.visited) >= MAX_PAGES:
+            if len(self.visited) >= config.MAX_PAGES:
                 return
 
             async with semaphore:
                 html = await self._fetch(session, url)
 
             if html is None:
+                continue
+
+            # Only process English content
+            if not is_english(html):
                 continue
 
             # Save raw HTML

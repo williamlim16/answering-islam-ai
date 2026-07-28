@@ -3,6 +3,18 @@ import re
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
+from langdetect import detect, LangDetectException
+
+def is_english(html: str) -> bool:
+    """Check if the HTML content is in English using langdetect."""
+    soup = BeautifulSoup(html, "lxml")
+    text = soup.get_text(separator=" ", strip=True)
+    if not text:
+        return False
+    try:
+        return detect(text) == 'en'
+    except LangDetectException:
+        return False
 
 from .models import Article
 from config import EXCLUDED_PATHS

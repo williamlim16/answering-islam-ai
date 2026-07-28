@@ -18,6 +18,42 @@ CRAWL_DELAY = 1.5  # seconds between requests (be polite)
 MAX_PAGES = 2000  # safety limit
 REQUEST_TIMEOUT = 30  # seconds
 
+# Language filter — excluded URL path prefixes (non-English sections)
+EXCLUDED_PATHS = [
+    "/Arabic/",
+    "/arabic/",
+    "/chinese/",
+    "/Chinese/",
+    "/Dutch/",
+    "/dutch/",
+    "/French/",
+    "/french/",
+    "/indonesian/",
+    "/Indonesian/",
+    "/Bahasa/",
+    "/bahasa/",
+    "/russian/",
+    "/Russian/",
+    "/Urdu/",
+    "/urdu/",
+    "/persian/",
+    "/Persian/",
+    "/turkish/",
+    "/Turkish/",
+    "/portuguese/",
+    "/Portuguese/",
+    "/italian/",
+    "/Italian/",
+    "/japanese/",
+    "/Japanese/",
+    "/korean/",
+    "/Korean/",
+    "/spanish/",
+    "/Spanish/",
+    "/german/",
+    "/German/",
+]
+
 # Embedding settings
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # fast, local, good quality
 CHUNK_SIZE = 1000  # characters per chunk

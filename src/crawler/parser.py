@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from markdownify import markdownify as md
 
 from .models import Article
+from config import EXCLUDED_PATHS
 
 # Topic mapping: URL path prefix → topic name
 TOPIC_MAP = {
@@ -131,6 +132,9 @@ def extract_links(html: str, base_url: str) -> list[str]:
             full_url = full_url.split("#")[0].rstrip("/")
             # Only keep .html and .htm pages
             if full_url.endswith((".html", ".htm")):
+                # Skip non-English language sections
+                if any(excluded in full_url for excluded in EXCLUDED_PATHS):
+                    continue
                 links.add(full_url)
 
     return list(links)

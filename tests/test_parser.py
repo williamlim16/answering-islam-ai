@@ -41,3 +41,14 @@ def test_extract_links_skips_external():
     html = '<a href="https://external.com/page">External</a>'
     links = extract_links(html, "https://www.answering-islam.org")
     assert len(links) == 0
+
+def test_extract_links_skips_non_english():
+    html = '''
+    <a href="Arabic/article.html">Arabic</a>
+    <a href="French/article.html">French</a>
+    <a href="chinese/article.html">Chinese</a>
+    <a href="authors/green/article.html">English</a>
+    '''
+    links = extract_links(html, "https://www.answering-islam.org")
+    assert len(links) == 1
+    assert "authors/green" in links[0]

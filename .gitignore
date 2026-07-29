@@ -5,8 +5,10 @@ venv/
 data/raw/
 data/processed/
 data/chromadb/
+data/*.jsonl
 *.egg-info/
 dist/
 build/
 .pytest_cache/
 .mypy_cache/
+.DS_STORE
